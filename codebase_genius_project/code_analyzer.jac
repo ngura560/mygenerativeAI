@@ -1,44 +1,27 @@
-import os;
-import ast;  # Python’s built-in code parser
+include repo_util;
 
-node CodeFile {
-    has path: str;
-    has functions: list;
-    has classes: list;
-}
 
 walker CodeAnalyzer {
-    can run with CodeFile entry {
-        print(f" Analyzing {here.path} ...");
+    has repo: Repository;
 
-        # Read and parse the Python file
-        local code = "";
-        with open(here.path, "r") as f {
-            code = f.read();
+    def parse_file(file_path: str) -> dict {
+        if (not (file_path.ends_with(".py") or file_path.ends_with(".jac"))) {
+            return {};
         }
 
-        local tree = py.ast.parse(code);
+        code = std.read(file_path);
 
-        # Collect function and class names
-        here.functions = [];
-        here.classes = [];
-        for node in tree.body {
-            if isinstance(node, py.ast.FunctionDef) {
-                here.functions.append(node.name);
-            }
-            elif isinstance(node, py.ast.ClassDef) {
-                here.classes.append(node.name);
-            }
-        }
+        json_str = llm(
+            prompt=f"""Extract classes and functions. Return ONLY valid JSON:
+            {{
+                "classes": ["ClassName"],
+                "functions": ["func_name"]
+            }}
+            Code:
+            {code}
+            """
+        );
 
-        print(f"   Functions: {here.functions}");
-        print(f"   Classes: {here.classes}");
+        return std.json_loads(json_str);
     }
-}
-
-with entry {
-    # Point this to any Python file in your repo
-    spawn here ++> CodeFile as file_node;
-    file_node.path = "./repo_util.py";
-    file_node -> CodeAnalyzer;
 }
