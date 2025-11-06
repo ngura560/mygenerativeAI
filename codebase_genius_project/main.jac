@@ -4,25 +4,25 @@ import doc_genie;
 
 # --- Function: Map repository files ---
 def map_repo() {
-    print("🗂️ Mapping repository files...");
+    print(" Mapping repository files...");
     repo_mapper.RepoMapper();
 }
 
 # --- Function: Analyze code ---
 def analyze_code() {
-    print("🔍 Analyzing code files...");
+    print(" Analyzing code files...");
     code_analyzer.CodeAnalyzer();
 }
 
 # --- Function: Generate documentation ---
 def generate_docs() {
-    print("📝 Generating documentation...");
+    print(" Generating documentation...");
     doc_genie.GenerateDocs();
 }
 
 # --- MAIN ENTRY POINT ---
 with entry {
-    print("🚀 Starting CodeBase Genius...");
+    print(" Starting CodeBase Genius...");
 
     # Step 1: Map repo
     map_repo();
